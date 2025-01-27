@@ -28,24 +28,31 @@ def benchmark(prompt: str, model: str, num_repetitions: int = 1) -> list:
 
         # Append the results
         # Also convert Ollama response duration nanoseconds to seconds
-        results.append(
-            {
-                "elapsed_time": elapsed_time,
-                "num_inference_tokens": response.eval_count,
-                "inference_duration": response.eval_duration / 1e9,
-                "load_duration": response.load_duration / 1e9,
-                "model": response.model,
-                "num_prompt_tokens": response.prompt_eval_count,
-                "prompt_duration": response.prompt_eval_duration / 1e9,
-                "prompt": prompt,
-                "response": response.message.content,
-                "total_duration": response.total_duration / 1e9,
-            }
+        result = {
+            "elapsed_time": elapsed_time,
+            "num_inference_tokens": response.eval_count,
+            "inference_duration": response.eval_duration / 1e9,
+            "load_duration": response.load_duration / 1e9,
+            "model": response.model,
+            "num_prompt_tokens": response.prompt_eval_count,
+            "prompt_duration": response.prompt_eval_duration / 1e9,
+            "prompt": prompt,
+            "response": response.message.content,
+            "total_duration": response.total_duration / 1e9,
+        }
+        result["prompt_token_throughput"] = (
+            result["num_prompt_tokens"] / result["prompt_duration"]
         )
+        result["inference_token_throughput"] = (
+            result["num_inference_tokens"] / result["inference_duration"]
+        )
+        results.append(result)
     return results
 
 
 def save_results(results: list, filename: str) -> None:
+    summary = {}
+
     # Calculate the summary
     num_prompt_tokens = [result["num_prompt_tokens"] for result in results]
     total_prompt_tokens = sum(num_prompt_tokens)
@@ -83,6 +90,18 @@ def save_results(results: list, filename: str) -> None:
     min_total_duration = min(total_durations)
     max_total_duration = max(total_durations)
     avg_total_duration = sum(total_durations) / len(results)
+
+    prompt_token_throughputs = [result["prompt_token_throughput"] for result in results]
+    min_prompt_token_throughput = min(prompt_token_throughputs)
+    max_prompt_token_throughput = max(prompt_token_throughputs)
+    avg_prompt_token_throughput = sum(prompt_token_throughputs) / len(results)
+
+    inference_token_throughputs = [
+        result["inference_token_throughput"] for result in results
+    ]
+    min_inference_token_throughput = min(inference_token_throughputs)
+    max_inference_token_throughput = max(inference_token_throughputs)
+    avg_inference_token_throughput = sum(inference_token_throughputs) / len(results)
 
     # Log the summary
 
