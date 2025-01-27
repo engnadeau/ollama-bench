@@ -23,8 +23,8 @@ def save_results(results, filename="benchmark_results.json"):
         json.dump(results, f, indent=4)
 
 
-def run_benchmark(prompt, num_repetitions=1, output_file="benchmark_results.json"):
-    logger.info(f"Running benchmark for model: default_model")
+def run_benchmark(prompt, model_name="default_model", num_repetitions=1, output_file="benchmark_results.json"):
+    logger.info(f"Running benchmark for model: {model_name}")
     try:
         results = benchmark(prompt, num_repetitions)
         save_results(results, output_file)
