@@ -1,19 +1,39 @@
 import json
 from loguru import logger
 import fire
-from ollama import OllamaClient
+from ollama import chat
+from ollama import ChatResponse
+import time
 
 
-def benchmark(prompt: str, model_name: str, num_repetitions: int = 1) -> list:
-    model = OllamaClient(model_name)
+def benchmark(prompt: str, model: str, num_repetitions: int = 1) -> list:
     results = []
     for _ in range(num_repetitions):
-        start_time = logger.time()
-        response = model.query(prompt)
-        end_time = logger.time()
+        # Run the chat API
+        start_time = time.time()
+        response: ChatResponse = chat(
+            model=model,
+            messages=[
+                {
+                    "role": "user",
+                    "content": prompt,
+                },
+            ],
+        )
+        end_time = time.time()
+
+        # Log the elapsed time
         elapsed_time = end_time - start_time
+        logger.info(f"Elapsed time: {elapsed_time:.2f} seconds")
+
+        # Append the results
         results.append(
-            {"prompt": prompt, "response": response, "elapsed_time": elapsed_time}
+            {
+                "prompt": prompt,
+                "response": response.message.content,
+                "elapsed_time": elapsed_time,
+                "model": model,
+            }
         )
     return results
 
@@ -25,24 +45,24 @@ def save_results(results: list, filename: str) -> None:
 
 def run_benchmark(
     prompt: str,
-    model_name: str,
+    model: str,
     num_repetitions: int = 3,
     output_file: str = "benchmark_results.json",
 ) -> None:
     # Validate the input
-    if not model_name:
+    if not model:
         logger.error(
             "Model name is required. Please visit https://ollama.com/search to find the models you want to bench."
         )
         raise ValueError("Model name cannot be empty")
 
     # Log the benchmark configuration
-    logger.info(f"Running benchmark for model: {model_name}")
+    logger.info(f"Running benchmark for model: {model}")
     logger.info(f"Prompt: {prompt}")
     logger.info(f"Number of repetitions: {num_repetitions}")
 
     # Run the benchmark
-    results = benchmark(prompt, model_name, num_repetitions)
+    results = benchmark(prompt, model, num_repetitions)
     save_results(results, output_file)
     logger.info(f"Benchmark results saved to {output_file}")
     logger.info("Benchmark completed successfully")
