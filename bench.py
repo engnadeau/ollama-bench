@@ -29,10 +29,16 @@ def benchmark(prompt: str, model: str, num_repetitions: int = 1) -> list:
         # Append the results
         results.append(
             {
+                "elapsed_time": elapsed_time,
+                "eval_count": response.eval_count,
+                "eval_duration": response.eval_duration,
+                "load_duration": response.load_duration,
+                "model": response.model,
+                "prompt_eval_count": response.prompt_eval_count,
+                "prompt_eval_duration": response.prompt_eval_duration,
                 "prompt": prompt,
                 "response": response.message.content,
-                "elapsed_time": elapsed_time,
-                "model": model,
+                "total_duration": response.total_duration,
             }
         )
     return results
@@ -89,4 +95,5 @@ def run_benchmark(
 
 if __name__ == "__main__":
     logger.add("logs/{time}.log")
-    fire.Fire(run_benchmark)
+    # fire.Fire(run_benchmark)
+    run_benchmark("What is the capital of France?", "qwen2.5-coder")
