@@ -1,5 +1,7 @@
 import json
 import time
+from pathlib import Path
+
 import fire
 from loguru import logger
 from ollama import ChatResponse, chat
@@ -90,10 +92,19 @@ def calculate_summary(results: list) -> dict:
     return summary
 
 
-def save_results(results: list, filename: str) -> None:
-    """Saves the benchmark results and summary to a JSON file."""
+def save_results(results: list, model: str) -> None:
+    """Saves the benchmark results and summary to a JSON file in a results folder."""
     summary = calculate_summary(results)
     final_results = {"results": results, "summary": summary}
+
+    # Create the results folder if it doesn't exist
+    results_dir = Path("results")
+    results_dir.mkdir(exist_ok=True)
+
+    # Generate a timestamped filename with the model name
+    timestamp = time.strftime("%Y-%m-%d_%H-%M-%S")
+    filename = results_dir / f"benchmark_{model}_{timestamp}.json"
+
     with open(filename, "w") as f:
         json.dump(final_results, f, indent=4, sort_keys=True)
     logger.info(f"Results saved to {filename}")
@@ -102,7 +113,6 @@ def save_results(results: list, filename: str) -> None:
 def run_benchmark(
     model: str,
     prompts_file: str = "prompts.txt",
-    output_file: str = "benchmark_results.json",
 ) -> None:
     """Runs the benchmark and saves the results."""
     if not model:
@@ -117,7 +127,7 @@ def run_benchmark(
 
     logger.info(f"Running benchmark for model: {model}")
     results = benchmark(prompts, model)
-    save_results(results, output_file)
+    save_results(results, model)
     logger.info("Benchmark completed successfully")
 
 
