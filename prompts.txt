@@ -1,0 +1,100 @@
+What is the capital of France?
+Explain the concept of Schrödinger's cat in quantum mechanics.
+What is 12345 multiplied by 6789?
+Translate "Hello, how are you?" into Spanish.
+Write a short story about a robot discovering emotions.
+What are the main causes of climate change?
+Solve for x: 2x + 3 = 11.
+Summarize the plot of "To Kill a Mockingbird" in one paragraph.
+Define the term "blockchain."
+What are the ethical considerations of using AI in medicine?
+Explain the difference between mitosis and meiosis.
+What are the three branches of the U.S. government and their functions?
+Write a poem about the ocean in iambic pentameter.
+How does photosynthesis work?
+Who painted the Sistine Chapel ceiling?
+What is the Pythagorean theorem?
+Provide three examples of alliteration.
+Describe the process of making bread.
+What is the significance of the year 1776 in American history?
+Write a Python function to calculate the factorial of a number.
+What are the pros and cons of renewable energy?
+Compare and contrast socialism and capitalism.
+Explain the theory of general relativity.
+How does an internal combustion engine work?
+What is the square root of 256?
+Provide a summary of the plot of "Hamlet."
+What is the main function of the circulatory system?
+Write an SQL query to retrieve all rows where "age" is greater than 30.
+Explain the significance of the Magna Carta.
+What is the role of DNA in heredity?
+Describe the lifecycle of a butterfly.
+What are the primary differences between IPv4 and IPv6?
+Define "machine learning" and give an example.
+What is the second law of thermodynamics?
+How does GPS technology work?
+Explain the difference between "affect" and "effect."
+What are the symptoms of diabetes?
+Write a persuasive argument for adopting electric vehicles.
+Translate "The quick brown fox jumps over the lazy dog" into French.
+How does a neural network learn?
+What are the three laws of motion proposed by Newton?
+What is the significance of the Treaty of Versailles?
+Describe the process of cell division.
+What are the components of a healthy diet?
+Write a haiku about the seasons.
+What is the importance of the scientific method?
+Explain the difference between "their," "there," and "they're."
+Solve for y: 3y - 7 = 14.
+What is the function of mitochondria in a cell?
+List the seven continents of the world.
+What is the meaning of life according to existential philosophy?
+Explain how a transistor works.
+What are the causes and effects of deforestation?
+Write a story using only 50 words.
+Who was the first person to walk on the moon?
+What are the different types of volcanoes?
+How does Wi-Fi technology work?
+Write a JavaScript function to reverse a string.
+What is the Fibonacci sequence?
+How does the immune system protect the body?
+Explain the greenhouse effect.
+Who wrote "Pride and Prejudice"?
+What is the importance of water conservation?
+Describe the process of photosynthesis in plants.
+Solve: If x = 5, what is 2x² + 3x - 4?
+What are the main differences between a comet and an asteroid?
+Write a summary of World War I in 100 words.
+What is the significance of the Golden Ratio in art?
+Explain the structure of an atom.
+What are the main features of the Linux operating system?
+How do black holes form?
+Write a script for a two-character dialogue about AI ethics.
+What are the advantages of cloud computing?
+Who is the author of "1984"?
+Describe the water cycle.
+What are the primary colors of light?
+Explain the principle of supply and demand.
+How does machine learning differ from traditional programming?
+Write a function in C++ to find the greatest common divisor of two numbers.
+What is the role of enzymes in the human body?
+What is the capital of Japan?
+Explain the Big Bang Theory.
+Describe the role of chlorophyll in plants.
+Write a limerick about a cat.
+What are the main differences between analog and digital signals?
+Solve: What is 25% of 480?
+Explain the importance of biodiversity.
+Write a SQL query to find duplicate entries in a table.
+Who was Marie Curie, and what were her contributions to science?
+Describe the phases of the moon.
+What is the significance of the year 1492 in world history?
+Define the term "quantum computing."
+Write a detailed character analysis of Sherlock Holmes.
+What are the components of a balanced ecosystem?
+How does the process of fermentation work?
+Explain the concept of opportunity cost in economics.
+What are the key features of the Python programming language?
+Translate "I love learning" into German.
+What are the effects of overfishing on marine ecosystems?
+Write a poem about innovation and technology.
