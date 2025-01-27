@@ -10,7 +10,7 @@ def benchmark(prompt: str, model: str, num_repetitions: int = 1) -> list:
     results = []
     for _ in range(num_repetitions):
         # Run the chat API
-        start_time = time.time()
+        start_time = time.monotonic()
         response: ChatResponse = chat(
             model=model,
             messages=[
@@ -20,7 +20,7 @@ def benchmark(prompt: str, model: str, num_repetitions: int = 1) -> list:
                 },
             ],
         )
-        end_time = time.time()
+        end_time = time.monotonic()
 
         # Log the elapsed time
         elapsed_time = end_time - start_time
