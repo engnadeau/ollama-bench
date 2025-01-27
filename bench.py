@@ -27,18 +27,19 @@ def benchmark(prompt: str, model: str, num_repetitions: int = 1) -> list:
         logger.info(f"Elapsed time: {elapsed_time:.2f} seconds")
 
         # Append the results
+        # Also convert Ollama response duration nanoseconds to seconds
         results.append(
             {
                 "elapsed_time": elapsed_time,
-                "eval_count": response.eval_count,
-                "eval_duration": response.eval_duration,
-                "load_duration": response.load_duration,
+                "num_inference_tokens": response.eval_count,
+                "inference_duration": response.eval_duration / 1e9,
+                "load_duration": response.load_duration / 1e9,
                 "model": response.model,
-                "prompt_eval_count": response.prompt_eval_count,
-                "prompt_eval_duration": response.prompt_eval_duration,
+                "num_prompt_tokens": response.prompt_eval_count,
+                "prompt_duration": response.prompt_eval_duration / 1e9,
                 "prompt": prompt,
                 "response": response.message.content,
-                "total_duration": response.total_duration,
+                "total_duration": response.total_duration / 1e9,
             }
         )
     return results
@@ -95,5 +96,4 @@ def run_benchmark(
 
 if __name__ == "__main__":
     logger.add("logs/{time}.log")
-    # fire.Fire(run_benchmark)
-    run_benchmark("What is the capital of France?", "qwen2.5-coder")
+    fire.Fire(run_benchmark)
