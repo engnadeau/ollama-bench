@@ -4,7 +4,7 @@ import fire
 from ollama import OllamaClient
 
 
-def benchmark(prompt, num_repetitions=1):
+def benchmark(prompt: str, num_repetitions: int = 1) -> list:
     model = OllamaClient("default_model")
     results = []
     for _ in range(num_repetitions):
@@ -18,12 +18,16 @@ def benchmark(prompt, num_repetitions=1):
     return results
 
 
-def save_results(results, filename="benchmark_results.json"):
+def save_results(results: list, filename: str = "benchmark_results.json") -> None:
     with open(filename, "w") as f:
         json.dump(results, f, indent=4)
 
 
-def run_benchmark(prompt, model_name="default_model", num_repetitions=1, output_file="benchmark_results.json"):
+def run_benchmark(prompt: str, model_name: str, num_repetitions: int = 1, output_file: str = "benchmark_results.json") -> None:
+    if not model_name:
+        logger.error("Model name is required. Please visit https://ollama.com/search to find the models you want to bench.")
+        raise ValueError("Model name cannot be empty")
+    
     logger.info(f"Running benchmark for model: {model_name}")
     try:
         results = benchmark(prompt, num_repetitions)
