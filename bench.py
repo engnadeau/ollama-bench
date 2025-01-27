@@ -39,8 +39,25 @@ def benchmark(prompt: str, model: str, num_repetitions: int = 1) -> list:
 
 
 def save_results(results: list, filename: str) -> None:
+    # Calculate the summary
+    times = [result["elapsed_time"] for result in results]
+    summary = {
+        "num_repetitions": len(results),
+        "min_time": min(times),
+        "max_time": max(times),
+        "mean_time": sum(times) / len(times),
+    }
+
+    # Log the summary
+    logger.info(f"Number of repetitions: {summary['num_repetitions']}")
+    logger.info(f"Min time: {summary['min_time']:.2f} seconds")
+    logger.info(f"Max time: {summary['max_time']:.2f} seconds")
+    logger.info(f"Mean time: {summary['mean_time']:.2f} seconds")
+
+    # Save the results
+    final_results = {"results": results, "summary": summary}
     with open(filename, "w") as f:
-        json.dump(results, f, indent=4, sort_keys=True)
+        json.dump(final_results, f, indent=4, sort_keys=True)
 
 
 def run_benchmark(
@@ -63,6 +80,8 @@ def run_benchmark(
 
     # Run the benchmark
     results = benchmark(prompt, model, num_repetitions)
+
+    # Save the results
     save_results(results, output_file)
     logger.info(f"Benchmark results saved to {output_file}")
     logger.info("Benchmark completed successfully")
