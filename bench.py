@@ -47,19 +47,44 @@ def benchmark(prompt: str, model: str, num_repetitions: int = 1) -> list:
 
 def save_results(results: list, filename: str) -> None:
     # Calculate the summary
-    times = [result["elapsed_time"] for result in results]
-    summary = {
-        "num_repetitions": len(results),
-        "min_time": min(times),
-        "max_time": max(times),
-        "mean_time": sum(times) / len(times),
-    }
+    num_prompt_tokens = [result["num_prompt_tokens"] for result in results]
+    total_prompt_tokens = sum(num_prompt_tokens)
+    min_prompt_tokens = min(num_prompt_tokens)
+    max_prompt_tokens = max(num_prompt_tokens)
+    avg_prompt_tokens = total_prompt_tokens / len(results)
+
+    num_inference_tokens = [result["num_inference_tokens"] for result in results]
+    total_inference_tokens = sum(num_inference_tokens)
+    min_inference_tokens = min(num_inference_tokens)
+    max_inference_tokens = max(num_inference_tokens)
+    avg_inference_tokens = total_inference_tokens / len(results)
+
+    elapsed_times = [result["elapsed_time"] for result in results]
+    min_elapsed_time = min(elapsed_times)
+    max_elapsed_time = max(elapsed_times)
+    avg_elapsed_time = sum(elapsed_times) / len(results)
+
+    inference_durations = [result["inference_duration"] for result in results]
+    min_inference_duration = min(inference_durations)
+    max_inference_duration = max(inference_durations)
+    avg_inference_duration = sum(inference_durations) / len(results)
+
+    prompt_durations = [result["prompt_duration"] for result in results]
+    min_prompt_duration = min(prompt_durations)
+    max_prompt_duration = max(prompt_durations)
+    avg_prompt_duration = sum(prompt_durations) / len(results)
+
+    load_durations = [result["load_duration"] for result in results]
+    min_load_duration = min(load_durations)
+    max_load_duration = max(load_durations)
+    avg_load_duration = sum(load_durations) / len(results)
+
+    total_durations = [result["total_duration"] for result in results]
+    min_total_duration = min(total_durations)
+    max_total_duration = max(total_durations)
+    avg_total_duration = sum(total_durations) / len(results)
 
     # Log the summary
-    logger.info(f"Number of repetitions: {summary['num_repetitions']}")
-    logger.info(f"Min time: {summary['min_time']:.2f} seconds")
-    logger.info(f"Max time: {summary['max_time']:.2f} seconds")
-    logger.info(f"Mean time: {summary['mean_time']:.2f} seconds")
 
     # Save the results
     final_results = {"results": results, "summary": summary}
