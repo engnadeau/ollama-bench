@@ -1,9 +1,9 @@
 import json
-from loguru import logger
-import fire
-from ollama import chat
-from ollama import ChatResponse
 import time
+
+import fire
+from loguru import logger
+from ollama import ChatResponse, chat
 
 
 def benchmark(prompt: str, model: str, num_repetitions: int = 1) -> list:
@@ -69,4 +69,5 @@ def run_benchmark(
 
 
 if __name__ == "__main__":
+    logger.add("logs/{time}.log")
     fire.Fire(run_benchmark)
