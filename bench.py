@@ -4,8 +4,8 @@ import fire
 from ollama import OllamaClient
 
 
-def benchmark(prompt: str, num_repetitions: int = 1) -> list:
-    model = OllamaClient("default_model")
+def benchmark(prompt: str, model_name: str, num_repetitions: int = 1) -> list:
+    model = OllamaClient(model_name)
     results = []
     for _ in range(num_repetitions):
         start_time = logger.time()
@@ -42,7 +42,7 @@ def run_benchmark(
     logger.info(f"Number of repetitions: {num_repetitions}")
 
     # Run the benchmark
-    results = benchmark(prompt, num_repetitions)
+    results = benchmark(prompt, model_name, num_repetitions)
     save_results(results, output_file)
     logger.info(f"Benchmark results saved to {output_file}")
     logger.info("Benchmark completed successfully")
