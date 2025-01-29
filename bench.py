@@ -106,10 +106,8 @@ def calculate_summary(results: List[BenchmarkResult]) -> dict:
     return summary
 
 
-def save_results(results: List[BenchmarkResult], model: str) -> None:
+def save_results(results: dict, model: str) -> None:
     """Saves the benchmark results and summary to a JSON file in a results folder."""
-    summary = calculate_summary(results)
-    final_results = {"results": [asdict(r) for r in results], "summary": summary}
 
     # Create the results folder if it doesn't exist
     results_dir = Path("results")
@@ -120,7 +118,7 @@ def save_results(results: List[BenchmarkResult], model: str) -> None:
     filename = results_dir / f"benchmark_{model}_{timestamp}.json"
 
     with open(filename, "w") as f:
-        json.dump(final_results, f, indent=4, sort_keys=True)
+        json.dump(results, f, indent=4, sort_keys=True)
     logger.info(f"Results saved to {filename}")
 
 
@@ -144,7 +142,24 @@ class BenchmarkRunner:
 
         logger.info(f"Running benchmark for model: {model}")
         results = benchmark(self.prompts, model)
-        save_results(results, model)
+        logger.info("Benchmark completed.")
+
+        logger.info("Calculating summary statistics...")
+        summary = calculate_summary(results)
+
+        # Only log important summary metrics
+        logger.info(f"Total elapsed time: {summary['total_elapsed_time']:.2f} seconds")
+        logger.info(
+            f"Average prompt token throughput: {summary['avg_prompt_token_throughput']:.2f} tokens/second"
+        )
+        logger.info(
+            f"Average inference token throughput: {summary['avg_inference_token_throughput']:.2f} tokens/second"
+        )
+
+        logger.info("Saving results...")
+        final_results = {"results": [asdict(r) for r in results], "summary": summary}
+        save_results(final_results, model)
+
         logger.info("Benchmark completed successfully")
 
 
