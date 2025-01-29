@@ -7,7 +7,7 @@ This project benchmarks the performance of different LLMs using the Ollama API. 
 1. **Install Dependencies:** This project uses `uv` for dependency and virtual environment management. Install the dependencies:
 
    ```bash
-   uv install
+   uv sync
    ```
 
 2. **Install Ollama:** Make sure you have Ollama installed and configured correctly. You'll need to have at least one LLM installed and accessible via the Ollama API. See the [Ollama documentation](https://ollama.com/) for instructions.
