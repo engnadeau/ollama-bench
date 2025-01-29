@@ -1,12 +1,12 @@
 import json
 import time
+from dataclasses import asdict, dataclass
 from pathlib import Path
-from dataclasses import dataclass, asdict
+from typing import List
 
 import fire
 from loguru import logger
 from ollama import ChatResponse, chat
-from typing import List
 
 
 @dataclass
