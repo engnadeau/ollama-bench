@@ -1,10 +1,30 @@
 import json
 import time
 from pathlib import Path
+from dataclasses import dataclass, asdict
 
 import fire
 from loguru import logger
 from ollama import ChatResponse, chat
+from typing import List
+
+
+@dataclass
+class BenchmarkResult:
+    """Data class to represent the results of a single benchmark run."""
+
+    elapsed_time: float
+    num_inference_tokens: int
+    inference_duration: float
+    load_duration: float
+    model: str
+    num_prompt_tokens: int
+    prompt_duration: float
+    prompt: str
+    response: str
+    total_duration: float
+    prompt_token_throughput: float
+    inference_token_throughput: float
 
 
 def load_prompts(filename: str) -> list:
@@ -17,7 +37,7 @@ def load_prompts(filename: str) -> list:
         raise
 
 
-def run_chat_api(prompt: str, model: str) -> dict:
+def run_chat_api(prompt: str, model: str) -> BenchmarkResult:
     """Executes the chat API and returns the response with timing details."""
     start_time = time.monotonic()
     response: ChatResponse = chat(
@@ -29,73 +49,67 @@ def run_chat_api(prompt: str, model: str) -> dict:
     elapsed_time = end_time - start_time
     logger.info(f"Elapsed time for prompt '{prompt}': {elapsed_time:.2f} seconds")
 
-    return {
-        "elapsed_time": elapsed_time,
-        "num_inference_tokens": response.eval_count,
-        "inference_duration": response.eval_duration / 1e9,
-        "load_duration": response.load_duration / 1e9,
-        "model": response.model,
-        "num_prompt_tokens": response.prompt_eval_count,
-        "prompt_duration": response.prompt_eval_duration / 1e9,
-        "prompt": prompt,
-        "response": response.message.content,
-        "total_duration": response.total_duration / 1e9,
-    }
-
-
-def calculate_token_throughput(results: dict) -> dict:
-    """Adds token throughput metrics to the results."""
-    results["prompt_token_throughput"] = (
-        results["num_prompt_tokens"] / results["prompt_duration"]
-        if results["prompt_duration"] > 0
-        else 0
+    return BenchmarkResult(
+        elapsed_time=elapsed_time,
+        num_inference_tokens=response.eval_count,
+        inference_duration=response.eval_duration / 1e9,
+        load_duration=response.load_duration / 1e9,
+        model=response.model,
+        num_prompt_tokens=response.prompt_eval_count,
+        prompt_duration=response.prompt_eval_duration / 1e9,
+        prompt=prompt,
+        response=response.message.content,
+        total_duration=response.total_duration / 1e9,
+        prompt_token_throughput=(
+            response.prompt_eval_count / response.prompt_eval_duration * 1e9
+            if response.prompt_eval_duration > 0
+            else 0
+        ),
+        inference_token_throughput=(
+            response.eval_count / response.eval_duration * 1e9
+            if response.eval_duration > 0
+            else 0
+        ),
     )
-    results["inference_token_throughput"] = (
-        results["num_inference_tokens"] / results["inference_duration"]
-        if results["inference_duration"] > 0
-        else 0
-    )
-    return results
 
 
-def benchmark(prompts: list, model: str) -> list:
+def benchmark(prompts: List[str], model: str) -> List[BenchmarkResult]:
     """Runs the benchmark for all prompts."""
+    # Warm up the model with a throwaway prompt
+    logger.info("Warming up the model...")
+    run_chat_api("This is a throwaway prompt to warm up the model.", model)
+    logger.info("Model warmed up.")
+
     results = []
     for prompt in prompts:
         result = run_chat_api(prompt, model)
-        results.append(calculate_token_throughput(result))
+        results.append(result)
     return results
 
 
-def calculate_summary(results: list) -> dict:
+def calculate_summary(results: List[BenchmarkResult]) -> dict:
     """Generates summary statistics for the benchmark results."""
     metrics = [
-        "num_prompt_tokens",
-        "num_inference_tokens",
-        "elapsed_time",
-        "inference_duration",
-        "prompt_duration",
-        "load_duration",
-        "total_duration",
-        "prompt_token_throughput",
-        "inference_token_throughput",
+        field.name
+        for field in BenchmarkResult.__dataclass_fields__.values()
+        if field.type is not str
     ]
 
     summary = {}
     for metric in metrics:
-        values = [result[metric] for result in results]
-        summary[f"total_{metric}"] = sum(values)
+        values = [getattr(result, metric) for result in results]
+        summary[f"total_{metric}"] = sum(values) if values else 0
         summary[f"avg_{metric}"] = sum(values) / len(values) if values else 0
-        summary[f"min_{metric}"] = min(values, default=0)
-        summary[f"max_{metric}"] = max(values, default=0)
+        summary[f"min_{metric}"] = min(values) if values else 0
+        summary[f"max_{metric}"] = max(values) if values else 0
 
     return summary
 
 
-def save_results(results: list, model: str) -> None:
+def save_results(results: List[BenchmarkResult], model: str) -> None:
     """Saves the benchmark results and summary to a JSON file in a results folder."""
     summary = calculate_summary(results)
-    final_results = {"results": results, "summary": summary}
+    final_results = {"results": [asdict(r) for r in results], "summary": summary}
 
     # Create the results folder if it doesn't exist
     results_dir = Path("results")
@@ -110,25 +124,48 @@ def save_results(results: list, model: str) -> None:
     logger.info(f"Results saved to {filename}")
 
 
+class BenchmarkRunner:
+    """
+    Main class to manage the benchmark process.  Loads prompts and runs the benchmark for a given model.
+    """
+
+    def __init__(self, prompts_file: str = "prompts.txt"):
+        self.prompts = load_prompts(prompts_file)
+
+    def run(self, model: str) -> None:
+        """Runs the benchmark and saves the results."""
+        if not model:
+            logger.error(
+                "Model name is required. See https://ollama.com/search for available models."
+            )
+            raise ValueError("Model name cannot be empty")
+
+        logger.info(f"Loaded {len(self.prompts)} prompts.")
+
+        logger.info(f"Running benchmark for model: {model}")
+        results = benchmark(self.prompts, model)
+        save_results(results, model)
+        logger.info("Benchmark completed successfully")
+
+
+def main(
+    model: str,
+    prompts_file: str = "prompts.txt",
+) -> None:
+    """Entry point for the benchmark script."""
+    try:
+        runner = BenchmarkRunner(prompts_file)
+        runner.run(model)
+    except Exception as e:
+        logger.exception(f"An error occurred: {e}")
+        raise
+
+
 def run_benchmark(
     model: str,
     prompts_file: str = "prompts.txt",
 ) -> None:
-    """Runs the benchmark and saves the results."""
-    if not model:
-        logger.error(
-            "Model name is required. See https://ollama.com/search for available models."
-        )
-        raise ValueError("Model name cannot be empty")
-
-    logger.info(f"Loading prompts from: {prompts_file}")
-    prompts = load_prompts(prompts_file)
-    logger.info(f"Loaded {len(prompts)} prompts.")
-
-    logger.info(f"Running benchmark for model: {model}")
-    results = benchmark(prompts, model)
-    save_results(results, model)
-    logger.info("Benchmark completed successfully")
+    main(model, prompts_file)
 
 
 if __name__ == "__main__":
