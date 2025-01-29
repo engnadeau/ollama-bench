@@ -81,7 +81,9 @@ def benchmark(prompts: List[str], model: str) -> List[BenchmarkResult]:
     logger.info("Model warmed up.")
 
     results = []
-    for prompt in prompts:
+    num_prompts = len(prompts)
+    for i, prompt in enumerate(prompts):
+        logger.info(f"Running prompt {i + 1}/{num_prompts}: {prompt}")
         result = run_chat_api(prompt, model)
         results.append(result)
     return results
