@@ -1,10 +1,25 @@
-# ollama-bench
+[![Lint](https://github.com/engnadeau/ollama-bench/actions/workflows/lint.yml/badge.svg)](https://github.com/engnadeau/ollama-bench/actions/workflows/lint.yml)
+
+<br />
+<div align="center">
+   <a href="https://github.com/othneildrew/Best-README-Template">
+     <img src="hero.jpg" alt="Hero Image" width="800" >
+   </a>
+
+   <h1 align="center">ollama-bench</h1>
+
+   <p align="center">
+      Benchmark your local LLMs using Ollama!
+   </p>
+</div>
+
+## About
 
 This project benchmarks the performance of different LLMs using the Ollama API. It measures various metrics, including inference time, token throughput, and resource utilization. Results are saved to a JSON file for easy analysis.
 
 ## Setup
 
-1. **Install Dependencies:** This project uses `uv` for dependency and virtual environment management. Install the dependencies:
+1. **Install Dependencies:** [This project uses `uv` for dependency and virtual environment management](https://docs.astral.sh/uv/getting-started/installation/). Install the dependencies:
 
    ```bash
    uv sync
