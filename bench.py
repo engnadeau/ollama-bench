@@ -161,13 +161,6 @@ def main(
         raise
 
 
-def run_benchmark(
-    model: str,
-    prompts_file: str = "prompts.txt",
-) -> None:
-    main(model, prompts_file)
-
-
 if __name__ == "__main__":
     logger.add("logs/{time}.log")
-    fire.Fire(run_benchmark)
+    fire.Fire(main)
